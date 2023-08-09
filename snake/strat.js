@@ -191,6 +191,7 @@ export function executeHeatMap(gameState) {
     gameState.board.snakes.forEach(snake => {
         snake.body.forEach(c => heatMap[c.y][c.x] = -7)
     })
+    heatMap[myHead.y][myHead.x] -= 8;
 
     gameState.board.food.forEach(food => {
         heatMap[food.y][food.x] = 10;
@@ -233,7 +234,7 @@ export function executeHeatMap(gameState) {
     console.log('moves', JSON.stringify(moves))
 
     let filteredMoves = moves.
-    filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
+        filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
     console.log('filtered moves', JSON.stringify(filteredMoves))
 
     let bestMove = getMax(filteredMoves, heatMap);
