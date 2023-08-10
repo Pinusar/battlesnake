@@ -170,15 +170,14 @@ function bump(y, x, map, by) {
 }
 
 function markDangerousPlaces(height, width, heatMap, myHead) {
-    for (let i = 0; i < height; i++) {
-        for (let j = 0; j < width; j++) {
-            let up = {y: i + 1, x: j}
-            let down = {y: i - 1, x: j}
-            let left = {y: i, x: j - 1}
-            let right = {y: i, x: j + 1};
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let up = {y: y + 1, x: x}
+            let down = {y: y - 1, x: x}
+            let left = {y: y, x: x - 1}
+            let right = {y: y, x: x + 1};
             let neighbours = [up, down, left, right];
             let count = 0;
-
 
             neighbours.forEach(n => {
                 if (n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0) {
@@ -209,7 +208,7 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
             // }
 
             if (count >= 3) {
-                bump(i, j, heatMap, -5);
+                bump(y, x, heatMap, -5);
             }
         }
     }
@@ -248,11 +247,8 @@ function markFood(gameState, heatMap, height, width) {
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
             if (heatMap[i][j] === 10) {
-
                 createSmallSquare(i, j, heatMap);
-
                 createMediumSquare(i, j, heatMap);
-
             }
         }
     }
@@ -266,10 +262,10 @@ function markSnakes(gameState, heatMap, myHead) {
 }
 
 function initializeHeatMap(height, width, heatMap) {
-    for (let i = 0; i < height; i++) {
+    for (let y = 0; y < height; y++) {
         let row = [];
-        for (let j = 0; j < width; j++) {
-            if (i === 0 || i === height - 1 || j === 0 || j === width - 1) {
+        for (let x = 0; x < width; x++) {
+            if (y === 0 || y === height - 1 || x === 0 || x === width - 1) {
                 row.push(-1)
             } else {
                 row.push(0);
@@ -294,10 +290,9 @@ function populateHeatMap(gameState) {
 }
 
 export function executeHeatMap(gameState) {
-    console.log('executing heatmap')
-    const myHead = gameState.you.body[0]
-
     let heatMap = populateHeatMap(gameState);
+
+    const myHead = gameState.you.body[0]
     let moves = [
         {
             direction: 'right',
@@ -317,17 +312,8 @@ export function executeHeatMap(gameState) {
         },
     ]
 
-    console.log('moves', JSON.stringify(moves))
-
     let borderAvoidingMoves = moves.
         filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
-    console.log('filtered moves', JSON.stringify(borderAvoidingMoves))
-
     let bestMove = getMax(borderAvoidingMoves, heatMap);
-
-    heatMap.forEach(row => console.log(JSON.stringify(row)))
-    console.log('bestMove', JSON.stringify(bestMove))
-    console.log('bestMove score', JSON.stringify(heatMap[bestMove.coordinate.y][bestMove.coordinate.x]))
-
     return bestMove.direction;
 }
