@@ -189,24 +189,6 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
                 }
             })
 
-            // if ((i === 9 && j === 10) || (i === 7 && j === 10)) {
-            //     console.log('neighbours for ' + i + ', ' + j)
-            //     console.log(JSON.stringify(neighbours))
-            //     neighbours.forEach(n => {
-            //         console.log(JSON.stringify(n))
-            //         if (n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0) {
-            //             console.log('n is out of bounds')
-            //         } else if (heatMap[n.y][n.x] < -5) {
-            //             if (!(myHead.x === n.x && myHead.y === n.y)) {
-            //                 console.log(`N is dangerous: ${heatMap[n.y][n.x]}`)
-            //             } else {
-            //                 console.log(`This is my head: ${heatMap[n.y][n.x]}`)
-            //             }
-            //         }
-            //     })
-            //     console.log('count', count)
-            // }
-
             if (count >= 3) {
                 bump(y, x, heatMap, -5);
             }
