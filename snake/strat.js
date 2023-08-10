@@ -279,7 +279,10 @@ function initializeHeatMap(height, width, heatMap) {
     }
 }
 
-function populateHeatMap(height, width, gameState, myHead) {
+function populateHeatMap(gameState) {
+    const height = gameState.board.height;
+    const width = gameState.board.width;
+    const myHead = gameState.you.body[0]
     let heatMap = [];
     initializeHeatMap(height, width, heatMap);
     markSnakes(gameState, heatMap, myHead);
@@ -292,12 +295,9 @@ function populateHeatMap(height, width, gameState, myHead) {
 
 export function executeHeatMap(gameState) {
     console.log('executing heatmap')
-    const height = gameState.board.height;
-    const width = gameState.board.width;
     const myHead = gameState.you.body[0]
 
-    let heatMap = populateHeatMap(height, width, gameState, myHead);
-
+    let heatMap = populateHeatMap(gameState);
     let moves = [
         {
             direction: 'right',
@@ -319,11 +319,11 @@ export function executeHeatMap(gameState) {
 
     console.log('moves', JSON.stringify(moves))
 
-    let filteredMoves = moves.
+    let borderAvoidingMoves = moves.
         filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
-    console.log('filtered moves', JSON.stringify(filteredMoves))
+    console.log('filtered moves', JSON.stringify(borderAvoidingMoves))
 
-    let bestMove = getMax(filteredMoves, heatMap);
+    let bestMove = getMax(borderAvoidingMoves, heatMap);
 
     heatMap.forEach(row => console.log(JSON.stringify(row)))
     console.log('bestMove', JSON.stringify(bestMove))
