@@ -150,7 +150,49 @@ function executeTargetStrategy(gameState, target) {
     }
     return executeMainStrategy(gameState, getPreferred(gameState));
 }
-function getMax(filteredMoves, heatMap) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+export function executeHeatMap(gameState) {
+    let heatMap = populateHeatMap(gameState);
+
+    const myHead = gameState.you.body[0]
+    let moves = [
+        {
+            direction: 'right',
+            coordinate: {x: myHead.x + 1, y: myHead.y}
+        },
+        {
+            direction: 'left',
+            coordinate: {x: myHead.x - 1, y: myHead.y}
+        },
+        {
+            direction: 'up',
+            coordinate: {x: myHead.x, y: myHead.y + 1}
+        },
+        {
+            direction: 'down',
+            coordinate: {x: myHead.x, y: myHead.y - 1}
+        },
+    ]
+
+    let borderAvoidingMoves = moves.
+        filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
+    let bestMove = getMaxScoreMove(borderAvoidingMoves, heatMap);
+    return bestMove.direction;
+}
+
+function getMaxScoreMove(filteredMoves, heatMap) {
     let bestMove = null;
     let max = -1000;
     filteredMoves.forEach(m => {
@@ -164,9 +206,53 @@ function getMax(filteredMoves, heatMap) {
     return bestMove;
 }
 
-function bump(y, x, map, by) {
-    if (x < 0 || x >= 11 || y < 0 || y >= 11) return
-    map[y][x] += by;
+function populateHeatMap(gameState) {
+    const height = gameState.board.height;
+    const width = gameState.board.width;
+    const myHead = gameState.you.body[0]
+    let heatMap = [];
+    initializeHeatMap(height, width, heatMap);
+    markSnakes(gameState, heatMap, myHead);
+    markFood(gameState, heatMap, height, width);
+    markDangerousPlaces(height, width, heatMap, myHead);
+    markDangerousPlaces(height, width, heatMap, myHead);
+
+    return heatMap;
+}
+
+function initializeHeatMap(height, width, heatMap) {
+    for (let y = 0; y < height; y++) {
+        let row = [];
+        for (let x = 0; x < width; x++) {
+            if (y === 0 || y === height - 1 || x === 0 || x === width - 1) {
+                row.push(-1)
+            } else {
+                row.push(0);
+            }
+        }
+        heatMap.push(row);
+    }
+}
+
+function markSnakes(gameState, heatMap, myHead) {
+    gameState.board.snakes.forEach(snake => {
+        snake.body.forEach(c => heatMap[c.y][c.x] = -7)
+    })
+    heatMap[myHead.y][myHead.x] -= 8;
+}
+
+function markFood(gameState, heatMap, height, width) {
+    gameState.board.food.forEach(food => {
+        heatMap[food.y][food.x] = 10;
+    })
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            if (heatMap[i][j] === 10) {
+                createSmallSquare(i, j, heatMap);
+                createMediumSquare(i, j, heatMap);
+            }
+        }
+    }
 }
 
 function markDangerousPlaces(height, width, heatMap, myHead) {
@@ -195,7 +281,6 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
         }
     }
 }
-
 function createSmallSquare(i, j, heatMap) {
     bump(i + 1, j + 1, heatMap, 5);
     bump(i + 1, j, heatMap, 5);
@@ -221,81 +306,7 @@ function createMediumSquare(i, j, heatMap) {
     bump(i - 2, j - 2, heatMap, 3);
     bump(i - 2, j - 2, heatMap, 3);
 }
-
-function markFood(gameState, heatMap, height, width) {
-    gameState.board.food.forEach(food => {
-        heatMap[food.y][food.x] = 10;
-    })
-    for (let i = 0; i < height; i++) {
-        for (let j = 0; j < width; j++) {
-            if (heatMap[i][j] === 10) {
-                createSmallSquare(i, j, heatMap);
-                createMediumSquare(i, j, heatMap);
-            }
-        }
-    }
-}
-
-function markSnakes(gameState, heatMap, myHead) {
-    gameState.board.snakes.forEach(snake => {
-        snake.body.forEach(c => heatMap[c.y][c.x] = -7)
-    })
-    heatMap[myHead.y][myHead.x] -= 8;
-}
-
-function initializeHeatMap(height, width, heatMap) {
-    for (let y = 0; y < height; y++) {
-        let row = [];
-        for (let x = 0; x < width; x++) {
-            if (y === 0 || y === height - 1 || x === 0 || x === width - 1) {
-                row.push(-1)
-            } else {
-                row.push(0);
-            }
-        }
-        heatMap.push(row);
-    }
-}
-
-function populateHeatMap(gameState) {
-    const height = gameState.board.height;
-    const width = gameState.board.width;
-    const myHead = gameState.you.body[0]
-    let heatMap = [];
-    initializeHeatMap(height, width, heatMap);
-    markSnakes(gameState, heatMap, myHead);
-    markFood(gameState, heatMap, height, width);
-    markDangerousPlaces(height, width, heatMap, myHead);
-    markDangerousPlaces(height, width, heatMap, myHead);
-
-    return heatMap;
-}
-
-export function executeHeatMap(gameState) {
-    let heatMap = populateHeatMap(gameState);
-
-    const myHead = gameState.you.body[0]
-    let moves = [
-        {
-            direction: 'right',
-            coordinate: {x: myHead.x + 1, y: myHead.y}
-        },
-        {
-            direction: 'left',
-            coordinate: {x: myHead.x - 1, y: myHead.y}
-        },
-        {
-            direction: 'up',
-            coordinate: {x: myHead.x, y: myHead.y + 1}
-        },
-        {
-            direction: 'down',
-            coordinate: {x: myHead.x, y: myHead.y - 1}
-        },
-    ]
-
-    let borderAvoidingMoves = moves.
-        filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
-    let bestMove = getMax(borderAvoidingMoves, heatMap);
-    return bestMove.direction;
+function bump(y, x, map, by) {
+    if (x < 0 || x >= 11 || y < 0 || y >= 11) return
+    map[y][x] += by;
 }
