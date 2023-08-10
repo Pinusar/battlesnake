@@ -213,6 +213,7 @@ function populateHeatMap(gameState) {
     let heatMap = [];
     initializeHeatMap(height, width, heatMap);
     markSnakes(gameState, heatMap, myHead);
+    markHazards(gameState, heatMap, myHead);
     markFood(gameState, heatMap, height, width);
     markDangerousPlaces(height, width, heatMap, myHead);
     markDangerousPlaces(height, width, heatMap, myHead);
@@ -239,6 +240,11 @@ function markSnakes(gameState, heatMap, myHead) {
         snake.body.forEach(c => heatMap[c.y][c.x] = -7)
     })
     heatMap[myHead.y][myHead.x] -= 8;
+}
+function markHazards(gameState, heatMap, myHead) {
+    gameState.board.hazards.forEach(c => {
+        bump(c.y, c.x, heatMap, -3)
+    })
 }
 
 function markFood(gameState, heatMap, height, width) {
