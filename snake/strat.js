@@ -169,17 +169,107 @@ function bump(y, x, map, by) {
     map[y][x] += by;
 }
 
-export function executeHeatMap(gameState) {
-    console.log('executing heatmap')
-    const height = gameState.board.height;
-    const width = gameState.board.width;
-    const myHead = gameState.you.body[0]
+function markDangerousPlaces(height, width, heatMap, myHead) {
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            let up = {y: i + 1, x: j}
+            let down = {y: i - 1, x: j}
+            let left = {y: i, x: j - 1}
+            let right = {y: i, x: j + 1};
+            let neighbours = [up, down, left, right];
+            let count = 0;
 
-    let heatMap = [];
+
+            neighbours.forEach(n => {
+                if (n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0) {
+                    count++;
+                } else if (heatMap[n.y][n.x] < -5) {
+                    if (!(myHead.x === n.x && myHead.y === n.y)) {
+                        count++;
+                    }
+                }
+            })
+
+            // if ((i === 9 && j === 10) || (i === 7 && j === 10)) {
+            //     console.log('neighbours for ' + i + ', ' + j)
+            //     console.log(JSON.stringify(neighbours))
+            //     neighbours.forEach(n => {
+            //         console.log(JSON.stringify(n))
+            //         if (n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0) {
+            //             console.log('n is out of bounds')
+            //         } else if (heatMap[n.y][n.x] < -5) {
+            //             if (!(myHead.x === n.x && myHead.y === n.y)) {
+            //                 console.log(`N is dangerous: ${heatMap[n.y][n.x]}`)
+            //             } else {
+            //                 console.log(`This is my head: ${heatMap[n.y][n.x]}`)
+            //             }
+            //         }
+            //     })
+            //     console.log('count', count)
+            // }
+
+            if (count >= 3) {
+                bump(i, j, heatMap, -5);
+            }
+        }
+    }
+}
+
+function createSmallSquare(i, j, heatMap) {
+    bump(i + 1, j + 1, heatMap, 5);
+    bump(i + 1, j, heatMap, 5);
+    bump(i + 1, j - 1, heatMap, 5);
+    bump(i, j - 1, heatMap, 5);
+    bump(i, j + 1, heatMap, 5);
+    bump(i - 1, j, heatMap, 5);
+    bump(i - 1, j + 1, heatMap, 5);
+    bump(i - 1, j - 1, heatMap, 5);
+}
+
+function createMediumSquare(i, j, heatMap) {
+    bump(i + 2, j, heatMap, 3);
+    bump(i + 2, j + 1, heatMap, 3);
+    bump(i + 2, j - 1, heatMap, 3);
+    bump(i, j + 2, heatMap, 3);
+    bump(i, j - 2, heatMap, 3);
+    bump(i - 2, j, heatMap, 3);
+    bump(i - 2, j + 1, heatMap, 3);
+    bump(i - 2, j - 1, heatMap, 3);
+    bump(i - 2, j + 2, heatMap, 3);
+    bump(i - 2, j + 2, heatMap, 3);
+    bump(i - 2, j - 2, heatMap, 3);
+    bump(i - 2, j - 2, heatMap, 3);
+}
+
+function markFood(gameState, heatMap, height, width) {
+    gameState.board.food.forEach(food => {
+        heatMap[food.y][food.x] = 10;
+    })
+    for (let i = 0; i < height; i++) {
+        for (let j = 0; j < width; j++) {
+            if (heatMap[i][j] === 10) {
+
+                createSmallSquare(i, j, heatMap);
+
+                createMediumSquare(i, j, heatMap);
+
+            }
+        }
+    }
+}
+
+function markSnakes(gameState, heatMap, myHead) {
+    gameState.board.snakes.forEach(snake => {
+        snake.body.forEach(c => heatMap[c.y][c.x] = -7)
+    })
+    heatMap[myHead.y][myHead.x] -= 8;
+}
+
+function initializeHeatMap(height, width, heatMap) {
     for (let i = 0; i < height; i++) {
         let row = [];
         for (let j = 0; j < width; j++) {
-            if (i === 0 || i === height -1 || j === 0 || j === width -1) {
+            if (i === 0 || i === height - 1 || j === 0 || j === width - 1) {
                 row.push(-1)
             } else {
                 row.push(0);
@@ -187,30 +277,26 @@ export function executeHeatMap(gameState) {
         }
         heatMap.push(row);
     }
+}
 
-    gameState.board.snakes.forEach(snake => {
-        snake.body.forEach(c => heatMap[c.y][c.x] = -7)
-    })
-    heatMap[myHead.y][myHead.x] -= 8;
+function populateHeatMap(height, width, gameState, myHead) {
+    let heatMap = [];
+    initializeHeatMap(height, width, heatMap);
+    markSnakes(gameState, heatMap, myHead);
+    markFood(gameState, heatMap, height, width);
+    markDangerousPlaces(height, width, heatMap, myHead);
+    markDangerousPlaces(height, width, heatMap, myHead);
 
-    gameState.board.food.forEach(food => {
-        heatMap[food.y][food.x] = 10;
-    })
+    return heatMap;
+}
 
-    for (let i = 0; i < height; i++) {
-        for (let j = 0; j < width; j++) {
-            if (heatMap[i][j] === 10) {
-                bump(i - 1, j, heatMap, 5);
-                bump(i + 1, j, heatMap, 5);
-                bump(i, j - 1, heatMap, 5);
-                bump(i, j + 1, heatMap, 5);
-                bump(i + 1, j + 1, heatMap, 5);
-                bump(i + 1, j - 1, heatMap, 5);
-                bump(i - 1, j + 1, heatMap, 5);
-                bump(i - 1, j - 1, heatMap, 5);
-            }
-        }
-    }
+export function executeHeatMap(gameState) {
+    console.log('executing heatmap')
+    const height = gameState.board.height;
+    const width = gameState.board.width;
+    const myHead = gameState.you.body[0]
+
+    let heatMap = populateHeatMap(height, width, gameState, myHead);
 
     let moves = [
         {

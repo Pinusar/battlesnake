@@ -40,3 +40,11 @@ test("Should avoid dead end", () => {
 
     expect(move).toBe("up");
 });
+
+test("Should avoid dead end 2", () => {
+    const gameState = JSON.parse("{\"game\":{\"id\":\"d3693e13-f154-4a0a-8000-50b6422901f6\",\"ruleset\":{\"name\":\"standard\",\"version\":\"v1.2.3\",\"settings\":{\"foodSpawnChance\":15,\"minimumFood\":1,\"hazardDamagePerTurn\":0,\"hazardMap\":\"\",\"hazardMapAuthor\":\"\",\"royale\":{\"shrinkEveryNTurns\":0},\"squad\":{\"allowBodyCollisions\":false,\"sharedElimination\":false,\"sharedHealth\":false,\"sharedLength\":false}}},\"map\":\"standard\",\"timeout\":500,\"source\":\"custom\"},\"turn\":162,\"board\":{\"height\":11,\"width\":11,\"snakes\":[{\"id\":\"gs_XVCYbrwRpbcPM7yWdyTjCc3M\",\"name\":\"MartinTestSnake\",\"latency\":\"316\",\"health\":100,\"body\":[{\"x\":10,\"y\":8},{\"x\":9,\"y\":8},{\"x\":9,\"y\":9},{\"x\":8,\"y\":9},{\"x\":8,\"y\":10},{\"x\":7,\"y\":10},{\"x\":6,\"y\":10},{\"x\":5,\"y\":10},{\"x\":5,\"y\":9},{\"x\":4,\"y\":9},{\"x\":3,\"y\":9},{\"x\":2,\"y\":9},{\"x\":2,\"y\":10},{\"x\":1,\"y\":10},{\"x\":0,\"y\":10},{\"x\":0,\"y\":9},{\"x\":1,\"y\":9},{\"x\":1,\"y\":8},{\"x\":1,\"y\":7},{\"x\":2,\"y\":7},{\"x\":3,\"y\":7},{\"x\":4,\"y\":7},{\"x\":4,\"y\":7}],\"head\":{\"x\":10,\"y\":8},\"length\":23,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}],\"food\":[{\"x\":10,\"y\":3},{\"x\":5,\"y\":3},{\"x\":10,\"y\":1},{\"x\":6,\"y\":2},{\"x\":7,\"y\":1}],\"hazards\":[]},\"you\":{\"id\":\"gs_XVCYbrwRpbcPM7yWdyTjCc3M\",\"name\":\"MartinTestSnake\",\"latency\":\"316\",\"health\":100,\"body\":[{\"x\":10,\"y\":8},{\"x\":9,\"y\":8},{\"x\":9,\"y\":9},{\"x\":8,\"y\":9},{\"x\":8,\"y\":10},{\"x\":7,\"y\":10},{\"x\":6,\"y\":10},{\"x\":5,\"y\":10},{\"x\":5,\"y\":9},{\"x\":4,\"y\":9},{\"x\":3,\"y\":9},{\"x\":2,\"y\":9},{\"x\":2,\"y\":10},{\"x\":1,\"y\":10},{\"x\":0,\"y\":10},{\"x\":0,\"y\":9},{\"x\":1,\"y\":9},{\"x\":1,\"y\":8},{\"x\":1,\"y\":7},{\"x\":2,\"y\":7},{\"x\":3,\"y\":7},{\"x\":4,\"y\":7},{\"x\":4,\"y\":7}],\"head\":{\"x\":10,\"y\":8},\"length\":23,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}}");
+
+    const move = executeHeatMap(gameState)
+
+    expect(move).toBe("down");
+});
