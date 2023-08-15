@@ -189,6 +189,7 @@ export function executeHeatMap(gameState) {
     let borderAvoidingMoves = moves.
         filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
     let bestMove = getMaxScoreMove(borderAvoidingMoves, heatMap);
+    heatMap.forEach(row => console.log(JSON.stringify(row)))
     return bestMove.direction;
 }
 
@@ -236,8 +237,17 @@ function initializeHeatMap(height, width, heatMap) {
 }
 
 function markSnakes(gameState, heatMap, myHead) {
+    const myId = gameState.you.id;
     gameState.board.snakes.forEach(snake => {
-        snake.body.forEach(c => heatMap[c.y][c.x] = -7)
+        for (let i = 0; i < snake.body.length; i++){
+            const c = snake.body[i];
+            bump(c.y, c.x, heatMap, -7);
+            if (i === 0) {
+                if (snake.id !== myId) {
+                    createSmallSquare(c.y, c.x, heatMap, -11);
+                }
+            }
+        }
     })
     heatMap[myHead.y][myHead.x] -= 8;
 }
@@ -249,7 +259,7 @@ function markHazards(gameState, heatMap, myHead) {
 
 function markFood(gameState, heatMap, height, width) {
     gameState.board.food.forEach(food => {
-        heatMap[food.y][food.x] = 10;
+        bump(food.y, food.x, heatMap, 10)
     })
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
@@ -287,30 +297,31 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
         }
     }
 }
-function createSmallSquare(i, j, heatMap) {
-    bump(i + 1, j + 1, heatMap, 5);
-    bump(i + 1, j, heatMap, 5);
-    bump(i + 1, j - 1, heatMap, 5);
-    bump(i, j - 1, heatMap, 5);
-    bump(i, j + 1, heatMap, 5);
-    bump(i - 1, j, heatMap, 5);
-    bump(i - 1, j + 1, heatMap, 5);
-    bump(i - 1, j - 1, heatMap, 5);
+
+function createSmallSquare(y, x, heatMap, by= 5) {
+    bump(y + 1, x + 1, heatMap, by);
+    bump(y + 1, x, heatMap, by);
+    bump(y + 1, x - 1, heatMap, by);
+    bump(y, x - 1, heatMap, by);
+    bump(y, x + 1, heatMap, by);
+    bump(y - 1, x, heatMap, by);
+    bump(y - 1, x + 1, heatMap, by);
+    bump(y - 1, x - 1, heatMap, by);
 }
 
-function createMediumSquare(i, j, heatMap) {
-    bump(i + 2, j, heatMap, 3);
-    bump(i + 2, j + 1, heatMap, 3);
-    bump(i + 2, j - 1, heatMap, 3);
-    bump(i, j + 2, heatMap, 3);
-    bump(i, j - 2, heatMap, 3);
-    bump(i - 2, j, heatMap, 3);
-    bump(i - 2, j + 1, heatMap, 3);
-    bump(i - 2, j - 1, heatMap, 3);
-    bump(i - 2, j + 2, heatMap, 3);
-    bump(i - 2, j + 2, heatMap, 3);
-    bump(i - 2, j - 2, heatMap, 3);
-    bump(i - 2, j - 2, heatMap, 3);
+function createMediumSquare(y, x, heatMap) {
+    bump(y + 2, x, heatMap, 3);
+    bump(y + 2, x + 1, heatMap, 3);
+    bump(y + 2, x - 1, heatMap, 3);
+    bump(y, x + 2, heatMap, 3);
+    bump(y, x - 2, heatMap, 3);
+    bump(y - 2, x, heatMap, 3);
+    bump(y - 2, x + 1, heatMap, 3);
+    bump(y - 2, x - 1, heatMap, 3);
+    bump(y - 2, x + 2, heatMap, 3);
+    bump(y - 2, x + 2, heatMap, 3);
+    bump(y - 2, x - 2, heatMap, 3);
+    bump(y - 2, x - 2, heatMap, 3);
 }
 function bump(y, x, map, by) {
     if (x < 0 || x >= 11 || y < 0 || y >= 11) return
