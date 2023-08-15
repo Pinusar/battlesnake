@@ -152,16 +152,16 @@ function executeTargetStrategy(gameState, target) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
+function printHeatmap(heatMap) {
+    let heatmapPicture = '';
+    for (let row = 10; row >= 0; row--) {
+        for (let square = 0; square < 11; square++) {
+            heatmapPicture += `[${heatMap[row][square]}]`
+        }
+        heatmapPicture += '\n';
+    }
+    console.log(heatmapPicture);
+}
 
 export function executeHeatMap(gameState) {
     let heatMap = populateHeatMap(gameState);
@@ -188,8 +188,10 @@ export function executeHeatMap(gameState) {
 
     let borderAvoidingMoves = moves.
         filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
+
+    printHeatmap(heatMap);
+
     let bestMove = getMaxScoreMove(borderAvoidingMoves, heatMap);
-    heatMap.forEach(row => console.log(JSON.stringify(row)))
     return bestMove.direction;
 }
 
@@ -204,6 +206,8 @@ function getMaxScoreMove(filteredMoves, heatMap) {
             bestMove = m
         }
     })
+    console.log(JSON.stringify(filteredMoves))
+    console.log(`Best move is ${bestMove.direction} (${bestMove.coordinate.x}, ${bestMove.coordinate.y}). Score: ${max}`)
     return bestMove;
 }
 
@@ -249,7 +253,7 @@ function markSnakes(gameState, heatMap, myHead) {
             }
         }
     })
-    heatMap[myHead.y][myHead.x] -= 8;
+    heatMap[myHead.y][myHead.x] = -33.3;
 }
 function markHazards(gameState, heatMap, myHead) {
     gameState.board.hazards.forEach(c => {
@@ -263,9 +267,10 @@ function markFood(gameState, heatMap, height, width) {
     })
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
-            if (heatMap[i][j] === 10) {
-                createSmallSquare(i, j, heatMap);
-                createMediumSquare(i, j, heatMap);
+            if (heatMap[i][j] > 8) {
+                console.log('creating square...')
+                createSmallSquare(i, j, heatMap, 2);
+                //createMediumSquare(i, j, heatMap);
             }
         }
     }

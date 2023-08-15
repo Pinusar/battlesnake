@@ -1,4 +1,5 @@
 import {executeHeatMap} from "./strat";
+import expect from "expect";
 
 
 test("Should avoid crashing down", () => {
@@ -55,4 +56,12 @@ test("Should avoid head to head", () => {
     const move = executeHeatMap(gameState)
 
     expect(move).not.toBe("down");
+});
+
+test("Should move towards food at start", () => {
+    const gameState = JSON.parse("{\"game\":{\"id\":\"63500610-047a-4226-89c7-30bd2646f355\",\"ruleset\":{\"name\":\"standard\",\"version\":\"v1.2.3\",\"settings\":{\"foodSpawnChance\":15,\"minimumFood\":1,\"hazardDamagePerTurn\":0,\"hazardMap\":\"\",\"hazardMapAuthor\":\"\",\"royale\":{\"shrinkEveryNTurns\":0},\"squad\":{\"allowBodyCollisions\":false,\"sharedElimination\":false,\"sharedHealth\":false,\"sharedLength\":false}}},\"map\":\"standard\",\"timeout\":500,\"source\":\"custom\"},\"turn\":0,\"board\":{\"height\":11,\"width\":11,\"snakes\":[{\"id\":\"gs_M6kxwWygbF4rvjD7P77brMkd\",\"name\":\"MartinTestSnake\",\"latency\":\"\",\"health\":100,\"body\":[{\"x\":9,\"y\":9},{\"x\":9,\"y\":9},{\"x\":9,\"y\":9}],\"head\":{\"x\":9,\"y\":9},\"length\":3,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}},{\"id\":\"gs_hfSYvJd4BfS4P49gJ6fg3Wj6\",\"name\":\"Hungry Bot\",\"latency\":\"\",\"health\":100,\"body\":[{\"x\":1,\"y\":9},{\"x\":1,\"y\":9},{\"x\":1,\"y\":9}],\"head\":{\"x\":1,\"y\":9},\"length\":3,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#00cc00\",\"head\":\"alligator\",\"tail\":\"alligator\"}}],\"food\":[{\"x\":10,\"y\":8},{\"x\":0,\"y\":8},{\"x\":5,\"y\":5}],\"hazards\":[]},\"you\":{\"id\":\"gs_M6kxwWygbF4rvjD7P77brMkd\",\"name\":\"MartinTestSnake\",\"latency\":\"\",\"health\":100,\"body\":[{\"x\":9,\"y\":9},{\"x\":9,\"y\":9},{\"x\":9,\"y\":9}],\"head\":{\"x\":9,\"y\":9},\"length\":3,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}}");
+
+    const move = executeHeatMap(gameState)
+
+    expect(move).toBe("down");
 });
