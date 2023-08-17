@@ -298,6 +298,10 @@ function bumpFood(height, width, heatMap) {
                 createSmallSquare(i, j, heatMap, 3);
                 createMediumSquare(i, j, heatMap, 2);
                 createSquare(i, j, heatMap, 3, 1);
+                createSquare(i, j, heatMap, 4, 0.8);
+                createSquare(i, j, heatMap, 5, 0.4);
+                createSquare(i, j, heatMap, 6, 0.2);
+                createSquare(i, j, heatMap, 7, 0.1);
             }
         }
     }
