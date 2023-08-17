@@ -81,3 +81,11 @@ test("Should avoid dead end 3", () => {
 
     expect(move).toBe("left");
 });
+
+test("Should take food 2", () => {
+    const gameState = JSON.parse("{\"game\":{\"id\":\"7a142047-3924-49f8-a0d0-659295967ef2\",\"ruleset\":{\"name\":\"standard\",\"version\":\"v1.2.3\",\"settings\":{\"foodSpawnChance\":15,\"minimumFood\":1,\"hazardDamagePerTurn\":0,\"hazardMap\":\"\",\"hazardMapAuthor\":\"\",\"royale\":{\"shrinkEveryNTurns\":0},\"squad\":{\"allowBodyCollisions\":false,\"sharedElimination\":false,\"sharedHealth\":false,\"sharedLength\":false}}},\"map\":\"standard\",\"timeout\":500,\"source\":\"custom\"},\"turn\":198,\"board\":{\"height\":11,\"width\":11,\"snakes\":[{\"id\":\"gs_PCt9PX38Q9TXbCqjmqwbCJYH\",\"name\":\"MartinTestSnake\",\"latency\":\"274\",\"health\":5,\"body\":[{\"x\":1,\"y\":7},{\"x\":1,\"y\":6},{\"x\":1,\"y\":5},{\"x\":1,\"y\":4},{\"x\":0,\"y\":4},{\"x\":0,\"y\":5},{\"x\":0,\"y\":6}],\"head\":{\"x\":1,\"y\":7},\"length\":7,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}],\"food\":[{\"x\":5,\"y\":5},{\"x\":0,\"y\":10},{\"x\":4,\"y\":8},{\"x\":8,\"y\":5},{\"x\":3,\"y\":9},{\"x\":5,\"y\":9},{\"x\":2,\"y\":6},{\"x\":10,\"y\":9},{\"x\":5,\"y\":7},{\"x\":8,\"y\":7},{\"x\":2,\"y\":4},{\"x\":3,\"y\":3},{\"x\":10,\"y\":10},{\"x\":4,\"y\":9},{\"x\":1,\"y\":10},{\"x\":3,\"y\":0},{\"x\":4,\"y\":0},{\"x\":8,\"y\":8},{\"x\":4,\"y\":2},{\"x\":2,\"y\":7},{\"x\":2,\"y\":3},{\"x\":9,\"y\":2},{\"x\":7,\"y\":3},{\"x\":6,\"y\":8},{\"x\":9,\"y\":10},{\"x\":6,\"y\":5},{\"x\":6,\"y\":0},{\"x\":10,\"y\":1}],\"hazards\":[]},\"you\":{\"id\":\"gs_PCt9PX38Q9TXbCqjmqwbCJYH\",\"name\":\"MartinTestSnake\",\"latency\":\"274\",\"health\":5,\"body\":[{\"x\":1,\"y\":7},{\"x\":1,\"y\":6},{\"x\":1,\"y\":5},{\"x\":1,\"y\":4},{\"x\":0,\"y\":4},{\"x\":0,\"y\":5},{\"x\":0,\"y\":6}],\"head\":{\"x\":1,\"y\":7},\"length\":7,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}}");
+
+    const move = executeHeatMap(gameState)
+
+    expect(move).toBe("right");
+});
