@@ -1,3 +1,6 @@
+const DEATH = -100;
+const HEAD_DANGER = -50;
+
 function movesMatch(m1, m2) {
     return m1.x === m2.x && m1.y === m2.y;
 }
@@ -156,11 +159,12 @@ function printHeatmap(heatMap) {
     let heatmapPicture = '';
     for (let row = 10; row >= 0; row--) {
         for (let square = 0; square < 11; square++) {
-            heatmapPicture += `[${heatMap[row][square]}]`
+            let score = heatMap[row][square];
+            heatmapPicture += `[${score.toString().padStart(5)}]`
         }
         heatmapPicture += '\n';
     }
-    console.log(heatmapPicture);
+    console.log('HEAT MAP\n', heatmapPicture);
 }
 
 export function executeHeatMap(gameState) {
@@ -189,6 +193,7 @@ export function executeHeatMap(gameState) {
     let borderAvoidingMoves = moves.
         filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
 
+    populateGameStatePicture(gameState)
     printHeatmap(heatMap);
 
     let bestMove = getMaxScoreMove(borderAvoidingMoves, heatMap);
@@ -226,6 +231,29 @@ function populateHeatMap(gameState) {
     return heatMap;
 }
 
+function populateGameStatePicture(gameState) {
+    const height = gameState.board.height;
+    const width = gameState.board.width;
+    let picture = [];
+    initializeHeatMap(height, width, picture);
+    gameState.board.snakes.forEach(snake => {
+        snake.body.forEach(c => picture[c.y][c.x] = 'S')
+    })
+    gameState.board.food.forEach(food => {
+        picture[food.y][food.x] = 'F'
+    })
+
+    let result = '';
+    for (let row = 10; row >= 0; row--) {
+        for (let square = 0; square < 11; square++) {
+            let score = picture[row][square];
+            result += `[${score.toString().padStart(2)}]`
+        }
+        result += '\n';
+    }
+    console.log('GAME STATE\n', result);
+}
+
 function initializeHeatMap(height, width, heatMap) {
     for (let y = 0; y < height; y++) {
         let row = [];
@@ -245,10 +273,10 @@ function markSnakes(gameState, heatMap, myHead) {
     gameState.board.snakes.forEach(snake => {
         for (let i = 0; i < snake.body.length; i++){
             const c = snake.body[i];
-            bump(c.y, c.x, heatMap, -7);
+            bump(c.y, c.x, heatMap, DEATH);
             if (i === 0) {
                 if (snake.id !== myId) {
-                    createSmallSquare(c.y, c.x, heatMap, -11);
+                    createSmallSquare(c.y, c.x, heatMap, HEAD_DANGER);
                 }
             }
         }
@@ -261,19 +289,23 @@ function markHazards(gameState, heatMap, myHead) {
     })
 }
 
-function markFood(gameState, heatMap, height, width) {
-    gameState.board.food.forEach(food => {
-        bump(food.y, food.x, heatMap, 10)
-    })
+function bumpFood(height, width, heatMap) {
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
             if (heatMap[i][j] > 8) {
                 console.log('creating square...')
                 createSmallSquare(i, j, heatMap, 2);
-                //createMediumSquare(i, j, heatMap);
+                createMediumSquare(i, j, heatMap, 1);
             }
         }
     }
+}
+
+function markFood(gameState, heatMap, height, width) {
+    gameState.board.food.forEach(food => {
+        bump(food.y, food.x, heatMap, 10)
+    })
+    bumpFood(height, width, heatMap);
 }
 
 function markDangerousPlaces(height, width, heatMap, myHead) {
@@ -314,19 +346,19 @@ function createSmallSquare(y, x, heatMap, by= 5) {
     bump(y - 1, x - 1, heatMap, by);
 }
 
-function createMediumSquare(y, x, heatMap) {
-    bump(y + 2, x, heatMap, 3);
-    bump(y + 2, x + 1, heatMap, 3);
-    bump(y + 2, x - 1, heatMap, 3);
-    bump(y, x + 2, heatMap, 3);
-    bump(y, x - 2, heatMap, 3);
-    bump(y - 2, x, heatMap, 3);
-    bump(y - 2, x + 1, heatMap, 3);
-    bump(y - 2, x - 1, heatMap, 3);
-    bump(y - 2, x + 2, heatMap, 3);
-    bump(y - 2, x + 2, heatMap, 3);
-    bump(y - 2, x - 2, heatMap, 3);
-    bump(y - 2, x - 2, heatMap, 3);
+function createMediumSquare(y, x, heatMap, by = 3) {
+    bump(y + 2, x, heatMap, by);
+    bump(y + 2, x + 1, heatMap, by);
+    bump(y + 2, x - 1, heatMap, by);
+    bump(y, x + 2, heatMap, by);
+    bump(y, x - 2, heatMap, by);
+    bump(y - 2, x, heatMap, by);
+    bump(y - 2, x + 1, heatMap, by);
+    bump(y - 2, x - 1, heatMap, by);
+    bump(y - 2, x + 2, heatMap, by);
+    bump(y - 2, x + 2, heatMap, by);
+    bump(y - 2, x - 2, heatMap, by);
+    bump(y - 2, x - 2, heatMap, by);
 }
 function bump(y, x, map, by) {
     if (x < 0 || x >= 11 || y < 0 || y >= 11) return
