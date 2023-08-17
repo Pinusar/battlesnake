@@ -283,7 +283,7 @@ function markSnakes(gameState, heatMap, myHead) {
             const c = snake.body[i];
             if (i === 0) {
                 if (snake.id !== myId) {
-                    if (snake.body.length - 1 >= myLength) {
+                    if (snake.body.length + 1 >= myLength) {
                         createSmallSquare(c.y, c.x, heatMap, HEAD_DANGER);
                     } else {
                         createSmallSquare(c.y, c.x, heatMap, HEAD_WIN);
