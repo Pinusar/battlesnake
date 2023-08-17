@@ -89,3 +89,11 @@ test("Should take food 2", () => {
 
     expect(move).toBe("right");
 });
+
+test("Should avoid dead end 4", () => {
+    const gameState = JSON.parse("{\"game\":{\"id\":\"8831ba2e-763a-4d31-b69b-9318661014d3\",\"ruleset\":{\"name\":\"standard\",\"version\":\"v1.2.3\",\"settings\":{\"foodSpawnChance\":15,\"minimumFood\":1,\"hazardDamagePerTurn\":0,\"hazardMap\":\"\",\"hazardMapAuthor\":\"\",\"royale\":{\"shrinkEveryNTurns\":0},\"squad\":{\"allowBodyCollisions\":false,\"sharedElimination\":false,\"sharedHealth\":false,\"sharedLength\":false}}},\"map\":\"standard\",\"timeout\":500,\"source\":\"custom\"},\"turn\":110,\"board\":{\"height\":11,\"width\":11,\"snakes\":[{\"id\":\"gs_7k776kM3Bc637HVJtk8SQ7MC\",\"name\":\"MartinTestSnake\",\"latency\":\"352\",\"health\":100,\"body\":[{\"x\":4,\"y\":10},{\"x\":4,\"y\":9},{\"x\":5,\"y\":9},{\"x\":5,\"y\":8},{\"x\":6,\"y\":8},{\"x\":7,\"y\":8},{\"x\":8,\"y\":8},{\"x\":9,\"y\":8},{\"x\":10,\"y\":8},{\"x\":10,\"y\":7},{\"x\":10,\"y\":6},{\"x\":10,\"y\":5},{\"x\":10,\"y\":4},{\"x\":10,\"y\":3},{\"x\":10,\"y\":2},{\"x\":9,\"y\":2},{\"x\":9,\"y\":3},{\"x\":9,\"y\":4},{\"x\":9,\"y\":5},{\"x\":9,\"y\":6},{\"x\":9,\"y\":6}],\"head\":{\"x\":4,\"y\":10},\"length\":21,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}],\"food\":[{\"x\":3,\"y\":3},{\"x\":0,\"y\":3}],\"hazards\":[]},\"you\":{\"id\":\"gs_7k776kM3Bc637HVJtk8SQ7MC\",\"name\":\"MartinTestSnake\",\"latency\":\"352\",\"health\":100,\"body\":[{\"x\":4,\"y\":10},{\"x\":4,\"y\":9},{\"x\":5,\"y\":9},{\"x\":5,\"y\":8},{\"x\":6,\"y\":8},{\"x\":7,\"y\":8},{\"x\":8,\"y\":8},{\"x\":9,\"y\":8},{\"x\":10,\"y\":8},{\"x\":10,\"y\":7},{\"x\":10,\"y\":6},{\"x\":10,\"y\":5},{\"x\":10,\"y\":4},{\"x\":10,\"y\":3},{\"x\":10,\"y\":2},{\"x\":9,\"y\":2},{\"x\":9,\"y\":3},{\"x\":9,\"y\":4},{\"x\":9,\"y\":5},{\"x\":9,\"y\":6},{\"x\":9,\"y\":6}],\"head\":{\"x\":4,\"y\":10},\"length\":21,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}}");
+
+    const move = executeHeatMap(gameState)
+
+    expect(move).toBe("left");
+});

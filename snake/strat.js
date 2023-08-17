@@ -2,6 +2,7 @@ const DEATH = -100;
 const HEAD_DANGER = -50;
 const DEAD_END = -30;
 const DEAD_END_LIGHT = -25;
+const MILD_DANGER = -10;
 
 function movesMatch(m1, m2) {
     return m1.x === m2.x && m1.y === m2.y;
@@ -162,7 +163,7 @@ function printHeatmap(heatMap) {
     for (let row = 10; row >= 0; row--) {
         for (let square = 0; square < 11; square++) {
             let score = heatMap[row][square];
-            heatmapPicture += `[${score.toString().padStart(5)}]`
+            heatmapPicture += `[${score.toFixed(1).padStart(5)}]`
         }
         heatmapPicture += '\n';
     }
@@ -227,8 +228,9 @@ function populateHeatMap(gameState) {
     markSnakes(gameState, heatMap, myHead);
     markHazards(gameState, heatMap, myHead);
     markFood(gameState, heatMap, height, width);
-    markDangerousPlaces(height, width, heatMap, myHead);
-    markDangerousPlaces(height, width, heatMap, myHead);
+
+    colorFill(height, width, heatMap, gameState);
+
 
     return heatMap;
 }
@@ -342,6 +344,81 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
 
         }
     }
+}
+
+function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
+    if (containsMove(explored, {x, y})) {
+        return;
+    }
+
+    let up = {y: y + 1, x: x}
+    let down = {y: y - 1, x: x}
+    let left = {y: y, x: x - 1}
+    let right = {y: y, x: x + 1};
+    let neighbours = [up, down, left, right];
+    neighbours.forEach(n => {
+            if (!(n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0)) {
+                if (heatMap[n.y][n.x] > -20) {
+                    if (!containsMove(possibleMoves, {y:n.y, x: n.x})) {
+                        possibleMoves.push(n);
+                        toExplore.push(n);
+                    }
+                }
+            }
+        }
+    )
+    if (!containsMove(possibleMoves, {x, y})) {
+        possibleMoves.push({x, y});
+    }
+    explored.push({x, y});
+}
+
+function exploreMovesForCell(y, x, heatMap, setOfAreas) {
+    if (setOfAreas.some(area => containsMove(area, {x, y}))) {
+        return [];
+    }
+
+    let toExplore = [];
+    let explored = [];
+    let possibleMoves = [];
+
+    explore(y, x, heatMap, possibleMoves, toExplore, explored);
+
+    while (toExplore.length > 0) {
+        let nextMove = toExplore.pop();
+        explore(nextMove.y, nextMove.x, heatMap, possibleMoves, toExplore, explored);
+    }
+
+    return possibleMoves;
+}
+
+function colorFill(height, width, heatMap, gameState) {
+    let setOfAreas = [];
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            if (heatMap[y][x] > MILD_DANGER) {
+                let possibleMoves = exploreMovesForCell(y, x, heatMap, setOfAreas);
+                if (possibleMoves.length > 0) {
+                    setOfAreas.push(possibleMoves);
+                }
+            }
+        }
+    }
+
+    let myLength = gameState.you.body.length;
+
+    setOfAreas.sort((a, b) => b.length - a.length);
+
+    for (let i = 0; i < setOfAreas.length; i++){
+        const area = setOfAreas[i];
+        if (area.length < myLength) {
+            area.forEach(cell => {
+                bump(cell.y, cell.x, heatMap, DEAD_END + i * -10)
+            })
+        }
+    }
+
 }
 
 function createSmallSquare(y, x, heatMap, by= 5) {
