@@ -3,6 +3,7 @@ const HEAD_DANGER = -50;
 const DEAD_END = -30;
 const DEAD_END_LIGHT = -25;
 const MILD_DANGER = -10;
+const HEAD_WIN = 50;
 
 function movesMatch(m1, m2) {
     return m1.x === m2.x && m1.y === m2.y;
@@ -274,13 +275,18 @@ function initializeHeatMap(height, width, heatMap) {
 
 function markSnakes(gameState, heatMap, myHead) {
     const myId = gameState.you.id;
+    const myLength = gameState.you.body.length;
     gameState.board.snakes.forEach(snake => {
         for (let i = 0; i < snake.body.length; i++){
             const c = snake.body[i];
             bump(c.y, c.x, heatMap, DEATH);
             if (i === 0) {
                 if (snake.id !== myId) {
-                    createSmallSquare(c.y, c.x, heatMap, HEAD_DANGER);
+                    if (snake.body.length - 1 >= myLength) {
+                        createSmallSquare(c.y, c.x, heatMap, HEAD_DANGER);
+                    } else {
+                        createSmallSquare(c.y, c.x, heatMap, HEAD_WIN);
+                    }
                 }
             }
         }
