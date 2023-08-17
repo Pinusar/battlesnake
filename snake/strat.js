@@ -3,7 +3,8 @@ const HEAD_DANGER = -50;
 const DEAD_END = -30;
 const DEAD_END_LIGHT = -25;
 const MILD_DANGER = -10;
-const TAIL = 25;
+const TAIL = 5;
+const FOOD = 15;
 const HEAD_WIN = 50;
 
 function movesMatch(m1, m2) {
@@ -322,7 +323,7 @@ function bumpFood(height, width, heatMap) {
 
 function markFood(gameState, heatMap, height, width) {
     gameState.board.food.forEach(food => {
-        bump(food.y, food.x, heatMap, 10)
+        bump(food.y, food.x, heatMap, FOOD)
     })
     bumpFood(height, width, heatMap);
 }
