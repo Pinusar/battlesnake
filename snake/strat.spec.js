@@ -73,3 +73,11 @@ test("Should not collide with itself when tempted by food", () => {
 
     expect(move).toBe("down");
 });
+
+test("Should avoid dead end 3", () => {
+    const gameState = JSON.parse("{\"game\":{\"id\":\"8379b30b-c1be-4e61-94d9-8e8f71be0ea9\",\"ruleset\":{\"name\":\"standard\",\"version\":\"v1.2.3\",\"settings\":{\"foodSpawnChance\":15,\"minimumFood\":1,\"hazardDamagePerTurn\":0,\"hazardMap\":\"\",\"hazardMapAuthor\":\"\",\"royale\":{\"shrinkEveryNTurns\":0},\"squad\":{\"allowBodyCollisions\":false,\"sharedElimination\":false,\"sharedHealth\":false,\"sharedLength\":false}}},\"map\":\"standard\",\"timeout\":500,\"source\":\"custom\"},\"turn\":91,\"board\":{\"height\":11,\"width\":11,\"snakes\":[{\"id\":\"gs_q3tmyHF9V9Vpgm7jXTRqYV9J\",\"name\":\"MartinTestSnake\",\"latency\":\"283\",\"health\":99,\"body\":[{\"x\":2,\"y\":1},{\"x\":2,\"y\":0},{\"x\":3,\"y\":0},{\"x\":4,\"y\":0},{\"x\":5,\"y\":0},{\"x\":5,\"y\":1},{\"x\":5,\"y\":2},{\"x\":4,\"y\":2},{\"x\":3,\"y\":2},{\"x\":2,\"y\":2},{\"x\":1,\"y\":2},{\"x\":1,\"y\":3},{\"x\":1,\"y\":4},{\"x\":0,\"y\":4},{\"x\":0,\"y\":5},{\"x\":1,\"y\":5},{\"x\":1,\"y\":6}],\"head\":{\"x\":2,\"y\":1},\"length\":17,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}],\"food\":[{\"x\":3,\"y\":4}],\"hazards\":[]},\"you\":{\"id\":\"gs_q3tmyHF9V9Vpgm7jXTRqYV9J\",\"name\":\"MartinTestSnake\",\"latency\":\"283\",\"health\":99,\"body\":[{\"x\":2,\"y\":1},{\"x\":2,\"y\":0},{\"x\":3,\"y\":0},{\"x\":4,\"y\":0},{\"x\":5,\"y\":0},{\"x\":5,\"y\":1},{\"x\":5,\"y\":2},{\"x\":4,\"y\":2},{\"x\":3,\"y\":2},{\"x\":2,\"y\":2},{\"x\":1,\"y\":2},{\"x\":1,\"y\":3},{\"x\":1,\"y\":4},{\"x\":0,\"y\":4},{\"x\":0,\"y\":5},{\"x\":1,\"y\":5},{\"x\":1,\"y\":6}],\"head\":{\"x\":2,\"y\":1},\"length\":17,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}}");
+
+    const move = executeHeatMap(gameState)
+
+    expect(move).toBe("left");
+});

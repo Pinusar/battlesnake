@@ -293,7 +293,6 @@ function bumpFood(height, width, heatMap) {
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
             if (heatMap[i][j] > 8) {
-                console.log('creating square...')
                 createSmallSquare(i, j, heatMap, 2);
                 createMediumSquare(i, j, heatMap, 1);
             }
@@ -321,7 +320,7 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
             neighbours.forEach(n => {
                 if (n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0) {
                     count++;
-                } else if (heatMap[n.y][n.x] < -5) {
+                } else if (heatMap[n.y][n.x] <= -5) {
                     if (!(myHead.x === n.x && myHead.y === n.y)) {
                         count++;
                     }
@@ -331,6 +330,9 @@ function markDangerousPlaces(height, width, heatMap, myHead) {
             if (count >= 3) {
                 bump(y, x, heatMap, -5);
             }
+
+
+
         }
     }
 }
