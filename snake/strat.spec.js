@@ -121,3 +121,11 @@ test("Should avoid head to head 2", () => {
 
     expect(move).toBe("right");
 });
+
+test("Should stay in bounds on a big map", () => {
+    const gameState = JSON.parse("{\"game\":{\"id\":\"2d4f6a40-42e3-4abe-9a73-f8b1c9855cf7\",\"ruleset\":{\"name\":\"standard\",\"version\":\"v1.2.3\",\"settings\":{\"foodSpawnChance\":15,\"minimumFood\":1,\"hazardDamagePerTurn\":0,\"hazardMap\":\"\",\"hazardMapAuthor\":\"\",\"royale\":{\"shrinkEveryNTurns\":0},\"squad\":{\"allowBodyCollisions\":false,\"sharedElimination\":false,\"sharedHealth\":false,\"sharedLength\":false}}},\"map\":\"standard\",\"timeout\":500,\"source\":\"custom\"},\"turn\":1,\"board\":{\"height\":19,\"width\":19,\"snakes\":[{\"id\":\"gs_pvD4hPwXXmM9W33dbBccBkBd\",\"name\":\"MartinTestSnake\",\"latency\":\"320\",\"health\":99,\"body\":[{\"x\":9,\"y\":18},{\"x\":9,\"y\":17},{\"x\":9,\"y\":17}],\"head\":{\"x\":9,\"y\":18},\"length\":3,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}],\"food\":[{\"x\":10,\"y\":18},{\"x\":9,\"y\":9}],\"hazards\":[]},\"you\":{\"id\":\"gs_pvD4hPwXXmM9W33dbBccBkBd\",\"name\":\"MartinTestSnake\",\"latency\":\"320\",\"health\":99,\"body\":[{\"x\":9,\"y\":18},{\"x\":9,\"y\":17},{\"x\":9,\"y\":17}],\"head\":{\"x\":9,\"y\":18},\"length\":3,\"shout\":\"\",\"squad\":\"\",\"customizations\":{\"color\":\"#ff00ff\",\"head\":\"default\",\"tail\":\"default\"}}}");
+
+    const move = executeHeatMap(gameState)
+
+    expect(move).toBe("right");
+});
