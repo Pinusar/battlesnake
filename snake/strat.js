@@ -96,10 +96,7 @@ function getMaxScoreMove(filteredMoves, heatMap) {
 function populateHeatMap(gameState) {
     const height = gameState.board.height;
     const width = gameState.board.width;
-
-    let heatMap = [];
-    initializeHeatMap(height, width, heatMap);
-
+    let heatMap = initializeHeatMap(height, width);
     markSnakes(gameState, heatMap);
     markHazards(gameState, heatMap);
     markFood(gameState, heatMap);
@@ -113,8 +110,7 @@ function populateHeatMap(gameState) {
 function populateGameStatePicture(gameState) {
     const height = gameState.board.height;
     const width = gameState.board.width;
-    let picture = [];
-    initializeHeatMap(height, width, picture);
+    let picture = initializeHeatMap(height, width);
     gameState.board.snakes.forEach(snake => {
         snake.body.forEach(c => picture[c.y][c.x] = 'S')
     })
@@ -133,7 +129,8 @@ function populateGameStatePicture(gameState) {
     console.log('GAME STATE\n', result);
 }
 
-function initializeHeatMap(height, width, heatMap) {
+function initializeHeatMap(height, width) {
+    let heatMap = [];
     for (let y = 0; y < height; y++) {
         let row = [];
         for (let x = 0; x < width; x++) {
@@ -145,6 +142,7 @@ function initializeHeatMap(height, width, heatMap) {
         }
         heatMap.push(row);
     }
+    return heatMap;
 }
 
 function markSnakes(gameState, heatMap) {
