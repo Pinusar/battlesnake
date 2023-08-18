@@ -1,4 +1,4 @@
-import {executeFoodStrategy, executeHeatMap, executeMainStrategy} from "./strat.js";
+import {executeHeatMap} from "./strat.js";
 
 // See https://docs.battlesnake.com/api/example-move for available data
 export default function moveSnake(gameState) {
