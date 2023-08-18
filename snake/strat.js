@@ -1,4 +1,4 @@
-import {printDebugInfo} from "./mapVisualizer";
+import {printDebugInfo} from "./mapVisualizer.js";
 
 const DEATH = -100;
 const HEAD_DANGER = -50;
