@@ -269,14 +269,10 @@ function colorFill(height, width, heatMap, gameState) {
 function createSquare(y, x, heatMap, squareSize, by = 3) {
     for (let i = -squareSize; i < squareSize + 1; i++) {
         bump(y + squareSize, x + i, heatMap, by);
-    }
-
-    bump(y, x + squareSize, heatMap, by);
-    bump(y, x - squareSize, heatMap, by);
-
-    for (let i = -squareSize; i < squareSize + 1; i++) {
         bump(y - squareSize, x + i, heatMap, by);
     }
+    bump(y, x + squareSize, heatMap, by);
+    bump(y, x - squareSize, heatMap, by);
 }
 
 function bump(y, x, map, by) {
