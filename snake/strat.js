@@ -145,9 +145,6 @@ function getPossibleMoves(heatMap, moves) {
     return moves.filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
 }
 
-
-
-
 function getMaxScoreMove(filteredMoves, heatMap) {
     let bestMove = null;
     let max = -1000;
@@ -155,12 +152,10 @@ function getMaxScoreMove(filteredMoves, heatMap) {
         let y = m.coordinate.y;
         let x = m.coordinate.x;
         if (heatMap[y][x] > max) {
-            max = heatMap[y][x]
-            bestMove = m
+            max = heatMap[y][x];
+            bestMove = m;
         }
     })
-    console.log(JSON.stringify(filteredMoves))
-    console.log(`Best move is ${bestMove.direction} (${bestMove.coordinate.x}, ${bestMove.coordinate.y}). Score: ${max}`)
     return bestMove;
 }
 
