@@ -115,7 +115,53 @@ function floodFill(height, width, heatMap, gameState) {
     }
 
 }
+function exploreMovesForCell(y, x, heatMap, setOfAreas) {
+    if (setOfAreas.some(area => containsMove(area, {x, y}))) {
+        return [];
+    }
 
+    let toExplore = [];
+    let explored = [];
+    let possibleMoves = [];
+
+    explore(y, x, heatMap, possibleMoves, toExplore, explored);
+
+    while (toExplore.length > 0) {
+        let nextMove = toExplore.pop();
+        explore(nextMove.y, nextMove.x, heatMap, possibleMoves, toExplore, explored);
+    }
+
+    return possibleMoves;
+}
+function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
+    if (containsMove(explored, {x, y})) {
+        return;
+    }
+
+    let height = heatMap.length - 1;
+    let width = heatMap[0].length - 1;
+
+    let up = {y: y + 1, x: x}
+    let down = {y: y - 1, x: x}
+    let left = {y: y, x: x - 1}
+    let right = {y: y, x: x + 1};
+    let neighbours = [up, down, left, right];
+    neighbours.forEach(n => {
+            if (!(n.x > width || n.y < 0 || n.y > height || n.y < 0)) {
+                if (heatMap[n.y][n.x] > -20) {
+                    if (!containsMove(possibleMoves, {y:n.y, x: n.x})) {
+                        possibleMoves.push(n);
+                        toExplore.push(n);
+                    }
+                }
+            }
+        }
+    )
+    if (!containsMove(possibleMoves, {x, y})) {
+        possibleMoves.push({x, y});
+    }
+    explored.push({x, y});
+}
 
 function getMoves(gameState) {
     const myHead = gameState.you.body[0]
@@ -157,56 +203,6 @@ function getMaxScoreMove(filteredMoves, heatMap) {
         }
     })
     return bestMove;
-}
-
-
-function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
-    if (containsMove(explored, {x, y})) {
-        return;
-    }
-
-    let height = heatMap.length - 1;
-    let width = heatMap[0].length - 1;
-
-    let up = {y: y + 1, x: x}
-    let down = {y: y - 1, x: x}
-    let left = {y: y, x: x - 1}
-    let right = {y: y, x: x + 1};
-    let neighbours = [up, down, left, right];
-    neighbours.forEach(n => {
-            if (!(n.x > width || n.y < 0 || n.y > height || n.y < 0)) {
-                if (heatMap[n.y][n.x] > -20) {
-                    if (!containsMove(possibleMoves, {y:n.y, x: n.x})) {
-                        possibleMoves.push(n);
-                        toExplore.push(n);
-                    }
-                }
-            }
-        }
-    )
-    if (!containsMove(possibleMoves, {x, y})) {
-        possibleMoves.push({x, y});
-    }
-    explored.push({x, y});
-}
-
-function exploreMovesForCell(y, x, heatMap, setOfAreas) {
-    if (setOfAreas.some(area => containsMove(area, {x, y}))) {
-        return [];
-    }
-
-    let toExplore = [];
-    let explored = [];
-    let possibleMoves = [];
-
-    explore(y, x, heatMap, possibleMoves, toExplore, explored);
-
-    while (toExplore.length > 0) {
-        let nextMove = toExplore.pop();
-        explore(nextMove.y, nextMove.x, heatMap, possibleMoves, toExplore, explored);
-    }
-
-    return possibleMoves;
 }
 
 function containsMove(moveSet, targetMove) {
