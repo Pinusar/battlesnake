@@ -311,6 +311,6 @@ function createSquare(y, x, heatMap, squareSize, by = 3) {
 
 
 function bump(y, x, map, by) {
-    if (x < 0 || x >= 11 || y < 0 || y >= 11) return
+    if (x < 0 || x >= map.length || y < 0 || y >= map.length) return
     map[y][x] += by;
 }
