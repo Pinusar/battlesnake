@@ -11,14 +11,12 @@ const HEAD_WIN = 50;
 
 export function executeHeatMap(gameState) {
     let heatMap = populateHeatMap(gameState);
-    let borderAvoidingMoves = getLegalMoves(gameState, heatMap);
-
+    let moves = getMoves(gameState);
+    let possibleMoves = getPossibleMoves(heatMap, moves);
+    let bestMove = getMaxScoreMove(possibleMoves, heatMap);
     printDebugInfo(gameState, heatMap);
-
-    let bestMove = getMaxScoreMove(borderAvoidingMoves, heatMap);
     return bestMove.direction;
 }
-
 
 function populateHeatMap(gameState) {
     const height = gameState.board.height;
@@ -46,6 +44,7 @@ function initializeHeatMap(height, width) {
     }
     return heatMap;
 }
+
 function markSnakes(gameState, heatMap) {
     const myId = gameState.you.id;
     const myLength = gameState.you.body.length;
@@ -143,14 +142,7 @@ function getMoves(gameState) {
 function getPossibleMoves(heatMap, moves) {
     let height = heatMap.length - 1;
     let width = heatMap[0].length - 1;
-    let borderAvoidingMoves = moves.filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
-    return borderAvoidingMoves;
-}
-
-function getLegalMoves(gameState, heatMap) {
-    let moves = getMoves(gameState);
-    let borderAvoidingMoves = getPossibleMoves(heatMap, moves);
-    return borderAvoidingMoves;
+    return moves.filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
 }
 
 
