@@ -101,7 +101,7 @@ function populateHeatMap(gameState) {
     initializeHeatMap(height, width, heatMap);
     markSnakes(gameState, heatMap, myHead);
     markHazards(gameState, heatMap, myHead);
-    markFood(gameState, heatMap, height, width);
+    markFood(gameState, heatMap);
 
     colorFill(height, width, heatMap, gameState);
 
@@ -175,7 +175,7 @@ function markHazards(gameState, heatMap, myHead) {
     })
 }
 
-function markFood(gameState, heatMap, height, width) {
+function markFood(gameState, heatMap) {
     gameState.board.food.forEach(food => {
         bump(food.y, food.x, heatMap, FOOD);
         createSquare(food.y, food.x, heatMap, 1, 3);
