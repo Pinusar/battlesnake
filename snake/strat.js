@@ -179,13 +179,7 @@ function bumpFood(height, width, heatMap) {
     for (let i = 0; i < height; i++) {
         for (let j = 0; j < width; j++) {
             if (heatMap[i][j] > 8) {
-                createSmallSquare(i, j, heatMap, 3);
-                createMediumSquare(i, j, heatMap, 2);
-                createSquare(i, j, heatMap, 3, 1);
-                createSquare(i, j, heatMap, 4, 0.8);
-                createSquare(i, j, heatMap, 5, 0.4);
-                createSquare(i, j, heatMap, 6, 0.2);
-                createSquare(i, j, heatMap, 7, 0.1);
+
             }
         }
     }
@@ -193,7 +187,14 @@ function bumpFood(height, width, heatMap) {
 
 function markFood(gameState, heatMap, height, width) {
     gameState.board.food.forEach(food => {
-        bump(food.y, food.x, heatMap, FOOD)
+        bump(food.y, food.x, heatMap, FOOD);
+        createSmallSquare(food.y, food.x, heatMap, 3);
+        createMediumSquare(food.y, food.x, heatMap, 2);
+        createSquare(food.y, food.x, heatMap, 3, 1);
+        createSquare(food.y, food.x, heatMap, 4, 0.8);
+        createSquare(food.y, food.x, heatMap, 5, 0.4);
+        createSquare(food.y, food.x, heatMap, 6, 0.2);
+        createSquare(food.y, food.x, heatMap, 7, 0.1);
     })
     bumpFood(height, width, heatMap);
 }
