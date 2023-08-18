@@ -27,11 +27,9 @@ function printHeatmap(heatMap) {
     console.log('HEAT MAP\n', heatmapPicture);
 }
 
-export function executeHeatMap(gameState) {
-    let heatMap = populateHeatMap(gameState);
-
+function getMoves(gameState) {
     const myHead = gameState.you.body[0]
-    let moves = [
+    return [
         {
             direction: 'right',
             coordinate: {x: myHead.x + 1, y: myHead.y}
@@ -48,16 +46,32 @@ export function executeHeatMap(gameState) {
             direction: 'down',
             coordinate: {x: myHead.x, y: myHead.y - 1}
         },
-    ]
+    ];
+}
 
-
+function getPossibleMoves(heatMap, moves) {
     let height = heatMap.length - 1;
     let width = heatMap[0].length - 1;
-    let borderAvoidingMoves = moves.
-        filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
+    let borderAvoidingMoves = moves.filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
+    return borderAvoidingMoves;
+}
 
+function getLegalMoves(gameState, heatMap) {
+    let moves = getMoves(gameState);
+    let borderAvoidingMoves = getPossibleMoves(heatMap, moves);
+    return borderAvoidingMoves;
+}
+
+function printDebugInfo(gameState, heatMap) {
     populateGameStatePicture(gameState)
     printHeatmap(heatMap);
+}
+
+export function executeHeatMap(gameState) {
+    let heatMap = populateHeatMap(gameState);
+    let borderAvoidingMoves = getLegalMoves(gameState, heatMap);
+
+    printDebugInfo(gameState, heatMap);
 
     let bestMove = getMaxScoreMove(borderAvoidingMoves, heatMap);
     return bestMove.direction;
