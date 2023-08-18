@@ -100,10 +100,7 @@ function populateHeatMap(gameState) {
     markSnakes(gameState, heatMap);
     markHazards(gameState, heatMap);
     markFood(gameState, heatMap);
-
     colorFill(height, width, heatMap, gameState);
-
-
     return heatMap;
 }
 
