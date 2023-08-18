@@ -154,7 +154,6 @@ function markSnakes(gameState, heatMap, myHead) {
             }
         }
     })
-    heatMap[myHead.y][myHead.x] = -33.3;
 }
 function markHazards(gameState, heatMap, myHead) {
     gameState.board.hazards.forEach(c => {
