@@ -102,7 +102,6 @@ function floodFill(height, width, heatMap, gameState) {
     }
 
     let myLength = gameState.you.body.length;
-
     setOfAreas.sort((a, b) => b.length - a.length);
 
     for (let i = 0; i < setOfAreas.length; i++){
@@ -119,22 +118,18 @@ function exploreMovesForCell(y, x, heatMap, setOfAreas) {
     if (setOfAreas.some(area => containsMove(area, {x, y}))) {
         return [];
     }
-
-    let toExplore = [];
+    let toExplore = [{x, y}];
     let explored = [];
     let possibleMoves = [];
-
-    explore(y, x, heatMap, possibleMoves, toExplore, explored);
-
     while (toExplore.length > 0) {
         let nextMove = toExplore.pop();
         explore(nextMove.y, nextMove.x, heatMap, possibleMoves, toExplore, explored);
     }
-
     return possibleMoves;
 }
 function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
-    if (containsMove(explored, {x, y})) {
+    let currentMove = {x, y};
+    if (containsMove(explored, currentMove)) {
         return;
     }
 
@@ -145,22 +140,19 @@ function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
     let down = {y: y - 1, x: x}
     let left = {y: y, x: x - 1}
     let right = {y: y, x: x + 1};
-    let neighbours = [up, down, left, right];
-    neighbours.forEach(n => {
-            if (!(n.x > width || n.y < 0 || n.y > height || n.y < 0)) {
-                if (heatMap[n.y][n.x] > -20) {
-                    if (!containsMove(possibleMoves, {y:n.y, x: n.x})) {
-                        possibleMoves.push(n);
-                        toExplore.push(n);
+    let movesToExplore = [currentMove, up, down, left, right];
+    movesToExplore.forEach(m => {
+            if (!(m.x > width || m.y < 0 || m.y > height || m.y < 0)) {
+                if (heatMap[m.y][m.x] > -20) {
+                    if (!containsMove(possibleMoves, {y:m.y, x: m.x})) {
+                        possibleMoves.push(m);
+                        toExplore.push(m);
                     }
                 }
             }
         }
     )
-    if (!containsMove(possibleMoves, {x, y})) {
-        possibleMoves.push({x, y});
-    }
-    explored.push({x, y});
+    explored.push(currentMove);
 }
 
 function getMoves(gameState) {
