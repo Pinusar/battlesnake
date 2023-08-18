@@ -17,8 +17,8 @@ function containsMove(moveSet, targetMove) {
 
 function printHeatmap(heatMap) {
     let heatmapPicture = '';
-    for (let row = 10; row >= 0; row--) {
-        for (let square = 0; square < 11; square++) {
+    for (let row = heatMap.length - 1; row >= 0; row--) {
+        for (let square = 0; square < heatMap[0].length; square++) {
             let score = heatMap[row][square];
             heatmapPicture += `[${score.toFixed(1).padStart(5)}]`
         }
