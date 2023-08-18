@@ -188,36 +188,6 @@ function markFood(gameState, heatMap, height, width) {
     })
 }
 
-function markDangerousPlaces(height, width, heatMap, myHead) {
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            let up = {y: y + 1, x: x}
-            let down = {y: y - 1, x: x}
-            let left = {y: y, x: x - 1}
-            let right = {y: y, x: x + 1};
-            let neighbours = [up, down, left, right];
-            let count = 0;
-
-            neighbours.forEach(n => {
-                if (n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0) {
-                    count++;
-                } else if (heatMap[n.y][n.x] <= DEAD_END_LIGHT) {
-                    if (!(myHead.x === n.x && myHead.y === n.y)) {
-                        count++;
-                    }
-                }
-            })
-
-            if (count >= 3) {
-                bump(y, x, heatMap, DEAD_END);
-            }
-
-
-
-        }
-    }
-}
-
 function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
     if (containsMove(explored, {x, y})) {
         return;
