@@ -3,7 +3,6 @@ import {printDebugInfo} from "./mapVisualizer.js";
 const DEATH = -100;
 const HEAD_DANGER = -50;
 const DEAD_END = -30;
-const DEAD_END_LIGHT = -25;
 const MILD_DANGER = -10;
 const TAIL = 0.02;
 const FOOD = 15;
