@@ -50,8 +50,11 @@ export function executeHeatMap(gameState) {
         },
     ]
 
+
+    let height = heatMap.length - 1;
+    let width = heatMap[0].length - 1;
     let borderAvoidingMoves = moves.
-        filter(move => !(move.coordinate.x > 10 || move.coordinate.y < 0 || move.coordinate.y > 10 || move.coordinate.y < 0));
+        filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
 
     populateGameStatePicture(gameState)
     printHeatmap(heatMap);
@@ -105,8 +108,8 @@ function populateGameStatePicture(gameState) {
     })
 
     let result = '';
-    for (let row = 10; row >= 0; row--) {
-        for (let square = 0; square < 11; square++) {
+    for (let row = picture.length - 1; row >= 0; row--) {
+        for (let square = 0; square < picture.length; square++) {
             let score = picture[row][square];
             result += `[${score.toString().padStart(2)}]`
         }
@@ -217,13 +220,16 @@ function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
         return;
     }
 
+    let height = heatMap.length - 1;
+    let width = heatMap[0].length - 1;
+
     let up = {y: y + 1, x: x}
     let down = {y: y - 1, x: x}
     let left = {y: y, x: x - 1}
     let right = {y: y, x: x + 1};
     let neighbours = [up, down, left, right];
     neighbours.forEach(n => {
-            if (!(n.x > 10 || n.y < 0 || n.y > 10 || n.y < 0)) {
+            if (!(n.x > width || n.y < 0 || n.y > height || n.y < 0)) {
                 if (heatMap[n.y][n.x] > -20) {
                     if (!containsMove(possibleMoves, {y:n.y, x: n.x})) {
                         possibleMoves.push(n);
