@@ -155,9 +155,9 @@ function markSnakes(gameState, heatMap, myHead) {
             if (i === 0) {
                 if (snake.id !== myId) {
                     if (snake.body.length + 1 >= myLength) {
-                        createSmallSquare(c.y, c.x, heatMap, HEAD_DANGER);
+                        createSquare(c.y, c.x, heatMap, 1, HEAD_DANGER);
                     } else {
-                        createSmallSquare(c.y, c.x, heatMap, HEAD_WIN);
+                        createSquare(c.y, c.x, heatMap, 1, HEAD_WIN);
                     }
                 }
             }
@@ -266,14 +266,6 @@ function colorFill(height, width, heatMap, gameState) {
 
 }
 
-function createSmallSquare(y, x, heatMap, by= 5) {
-    createSquare(y, x, heatMap, 1, by);
-}
-
-function createMediumSquare(y, x, heatMap, by = 3) {
-    createSquare(y, x, heatMap, 2, by);
-}
-
 function createSquare(y, x, heatMap, squareSize, by = 3) {
     for (let i = -squareSize; i < squareSize + 1; i++) {
         bump(y + squareSize, x + i, heatMap, by);
@@ -286,8 +278,6 @@ function createSquare(y, x, heatMap, squareSize, by = 3) {
         bump(y - squareSize, x + i, heatMap, by);
     }
 }
-
-
 
 function bump(y, x, map, by) {
     if (x < 0 || x >= map.length || y < 0 || y >= map.length) return
