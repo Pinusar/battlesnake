@@ -1,3 +1,5 @@
+import {printDebugInfo} from "./mapVisualizer";
+
 const DEATH = -100;
 const HEAD_DANGER = -50;
 const DEAD_END = -30;
@@ -6,66 +8,6 @@ const MILD_DANGER = -10;
 const TAIL = 0.02;
 const FOOD = 15;
 const HEAD_WIN = 50;
-
-function movesMatch(m1, m2) {
-    return m1.x === m2.x && m1.y === m2.y;
-}
-
-function containsMove(moveSet, targetMove) {
-    return moveSet.some(m => movesMatch(m, targetMove));
-}
-
-function printHeatmap(heatMap) {
-    let heatmapPicture = '';
-    for (let row = heatMap.length - 1; row >= 0; row--) {
-        for (let square = 0; square < heatMap[0].length; square++) {
-            let score = heatMap[row][square];
-            heatmapPicture += `[${score.toFixed(1).padStart(5)}]`
-        }
-        heatmapPicture += '\n';
-    }
-    console.log('HEAT MAP\n', heatmapPicture);
-}
-
-function getMoves(gameState) {
-    const myHead = gameState.you.body[0]
-    return [
-        {
-            direction: 'right',
-            coordinate: {x: myHead.x + 1, y: myHead.y}
-        },
-        {
-            direction: 'left',
-            coordinate: {x: myHead.x - 1, y: myHead.y}
-        },
-        {
-            direction: 'up',
-            coordinate: {x: myHead.x, y: myHead.y + 1}
-        },
-        {
-            direction: 'down',
-            coordinate: {x: myHead.x, y: myHead.y - 1}
-        },
-    ];
-}
-
-function getPossibleMoves(heatMap, moves) {
-    let height = heatMap.length - 1;
-    let width = heatMap[0].length - 1;
-    let borderAvoidingMoves = moves.filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
-    return borderAvoidingMoves;
-}
-
-function getLegalMoves(gameState, heatMap) {
-    let moves = getMoves(gameState);
-    let borderAvoidingMoves = getPossibleMoves(heatMap, moves);
-    return borderAvoidingMoves;
-}
-
-function printDebugInfo(gameState, heatMap) {
-    populateGameStatePicture(gameState)
-    printHeatmap(heatMap);
-}
 
 export function executeHeatMap(gameState) {
     let heatMap = populateHeatMap(gameState);
@@ -77,21 +19,6 @@ export function executeHeatMap(gameState) {
     return bestMove.direction;
 }
 
-function getMaxScoreMove(filteredMoves, heatMap) {
-    let bestMove = null;
-    let max = -1000;
-    filteredMoves.forEach(m => {
-        let y = m.coordinate.y;
-        let x = m.coordinate.x;
-        if (heatMap[y][x] > max) {
-            max = heatMap[y][x]
-            bestMove = m
-        }
-    })
-    console.log(JSON.stringify(filteredMoves))
-    console.log(`Best move is ${bestMove.direction} (${bestMove.coordinate.x}, ${bestMove.coordinate.y}). Score: ${max}`)
-    return bestMove;
-}
 
 function populateHeatMap(gameState) {
     const height = gameState.board.height;
@@ -100,30 +27,8 @@ function populateHeatMap(gameState) {
     markSnakes(gameState, heatMap);
     markHazards(gameState, heatMap);
     markFood(gameState, heatMap);
-    colorFill(height, width, heatMap, gameState);
+    floodFill(height, width, heatMap, gameState);
     return heatMap;
-}
-
-function populateGameStatePicture(gameState) {
-    const height = gameState.board.height;
-    const width = gameState.board.width;
-    let picture = initializeHeatMap(height, width);
-    gameState.board.snakes.forEach(snake => {
-        snake.body.forEach(c => picture[c.y][c.x] = 'S')
-    })
-    gameState.board.food.forEach(food => {
-        picture[food.y][food.x] = 'F'
-    })
-
-    let result = '';
-    for (let row = picture.length - 1; row >= 0; row--) {
-        for (let square = 0; square < picture.length; square++) {
-            let score = picture[row][square];
-            result += `[${score.toString().padStart(2)}]`
-        }
-        result += '\n';
-    }
-    console.log('GAME STATE\n', result);
 }
 
 function initializeHeatMap(height, width) {
@@ -141,7 +46,6 @@ function initializeHeatMap(height, width) {
     }
     return heatMap;
 }
-
 function markSnakes(gameState, heatMap) {
     const myId = gameState.you.id;
     const myLength = gameState.you.body.length;
@@ -183,6 +87,91 @@ function markFood(gameState, heatMap) {
         createSquare(food.y, food.x, heatMap, 7, 0.1);
     })
 }
+
+function floodFill(height, width, heatMap, gameState) {
+    let setOfAreas = [];
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            if (heatMap[y][x] > MILD_DANGER) {
+                let possibleMoves = exploreMovesForCell(y, x, heatMap, setOfAreas);
+                if (possibleMoves.length > 0) {
+                    setOfAreas.push(possibleMoves);
+                }
+            }
+        }
+    }
+
+    let myLength = gameState.you.body.length;
+
+    setOfAreas.sort((a, b) => b.length - a.length);
+
+    for (let i = 0; i < setOfAreas.length; i++){
+        const area = setOfAreas[i];
+        if (area.length < myLength) {
+            area.forEach(cell => {
+                bump(cell.y, cell.x, heatMap, DEAD_END + i * -10)
+            })
+        }
+    }
+
+}
+
+
+function getMoves(gameState) {
+    const myHead = gameState.you.body[0]
+    return [
+        {
+            direction: 'right',
+            coordinate: {x: myHead.x + 1, y: myHead.y}
+        },
+        {
+            direction: 'left',
+            coordinate: {x: myHead.x - 1, y: myHead.y}
+        },
+        {
+            direction: 'up',
+            coordinate: {x: myHead.x, y: myHead.y + 1}
+        },
+        {
+            direction: 'down',
+            coordinate: {x: myHead.x, y: myHead.y - 1}
+        },
+    ];
+}
+
+function getPossibleMoves(heatMap, moves) {
+    let height = heatMap.length - 1;
+    let width = heatMap[0].length - 1;
+    let borderAvoidingMoves = moves.filter(move => !(move.coordinate.x > width || move.coordinate.y < 0 || move.coordinate.y > height || move.coordinate.y < 0));
+    return borderAvoidingMoves;
+}
+
+function getLegalMoves(gameState, heatMap) {
+    let moves = getMoves(gameState);
+    let borderAvoidingMoves = getPossibleMoves(heatMap, moves);
+    return borderAvoidingMoves;
+}
+
+
+
+
+function getMaxScoreMove(filteredMoves, heatMap) {
+    let bestMove = null;
+    let max = -1000;
+    filteredMoves.forEach(m => {
+        let y = m.coordinate.y;
+        let x = m.coordinate.x;
+        if (heatMap[y][x] > max) {
+            max = heatMap[y][x]
+            bestMove = m
+        }
+    })
+    console.log(JSON.stringify(filteredMoves))
+    console.log(`Best move is ${bestMove.direction} (${bestMove.coordinate.x}, ${bestMove.coordinate.y}). Score: ${max}`)
+    return bestMove;
+}
+
 
 function explore(y, x, heatMap, possibleMoves, toExplore, explored) {
     if (containsMove(explored, {x, y})) {
@@ -233,33 +222,11 @@ function exploreMovesForCell(y, x, heatMap, setOfAreas) {
     return possibleMoves;
 }
 
-function colorFill(height, width, heatMap, gameState) {
-    let setOfAreas = [];
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            if (heatMap[y][x] > MILD_DANGER) {
-                let possibleMoves = exploreMovesForCell(y, x, heatMap, setOfAreas);
-                if (possibleMoves.length > 0) {
-                    setOfAreas.push(possibleMoves);
-                }
-            }
-        }
-    }
-
-    let myLength = gameState.you.body.length;
-
-    setOfAreas.sort((a, b) => b.length - a.length);
-
-    for (let i = 0; i < setOfAreas.length; i++){
-        const area = setOfAreas[i];
-        if (area.length < myLength) {
-            area.forEach(cell => {
-                bump(cell.y, cell.x, heatMap, DEAD_END + i * -10)
-            })
-        }
-    }
-
+function containsMove(moveSet, targetMove) {
+    return moveSet.some(m => movesMatch(m, targetMove));
+}
+function movesMatch(m1, m2) {
+    return m1.x === m2.x && m1.y === m2.y;
 }
 
 function createSquare(y, x, heatMap, squareSize, by = 3) {
